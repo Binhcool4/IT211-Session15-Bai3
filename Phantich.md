@@ -1,19 +1,26 @@
-## Phần 1 – Phân tích logic
+Khi truy cập /products, hệ thống trả về danh sách sản phẩm mà không cần đăng nhập vì project chưa tích hợp Spring Security.
 
-Hiện tại `/products` truy cập được vì:
+Nguyên nhân chính:
 
-* Project chưa có dependency:
+Project chưa có dependency spring-boot-starter-security
 
-```gradle
-implementation 'org.springframework.boot:spring-boot-starter-security'
-```
+nên Spring Boot không tạo Security Filter Chain để chặn request.
 
-=> Spring Boot chưa kích hoạt Security Filter.
+Luồng hiện tại:
 
-Do đó:
+Client gọi /products
+↓
+Spring Boot chuyển thẳng request vào ProductController
+↓
+Method getAllProducts() chạy
+↓
+Trả về danh sách sản phẩm
 
-* mọi request đi thẳng vào Controller
-* không có bước xác thực.
+Controller hiện tại:
 
----
+@GetMapping("/products")
+public List<String> getAllProducts() {
+return Arrays.asList("Laptop Thinkpad", "Mouse Logitech", "Keyboard Akko");
+}
 
+Vì không có bước xác thực nên bất kỳ ai biết URL /products đều xem được dữ liệu.
